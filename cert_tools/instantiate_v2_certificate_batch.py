@@ -10,6 +10,7 @@ import hashlib
 import json
 import os
 import uuid
+import json
 
 import configargparse
 
@@ -78,7 +79,7 @@ def create_unsigned_certificates_from_roster(config):
     template = os.path.join(config.abs_data_dir, config.template_dir, config.template_file_name)
     issued_on = helpers.create_iso8601_tz()
     output_dir = os.path.join(config.abs_data_dir, config.unsigned_certificates_dir)
-    print('Writing certificates to ' + output_dir)
+    # print('Writing certificates to ' + output_dir)
 
     recipients = []
     with open(roster, 'r') as theFile:
@@ -91,6 +92,7 @@ def create_unsigned_certificates_from_roster(config):
         cert_str = template.read()
         template = json.loads(cert_str)
 
+        resultArr = []
         for recipient in recipients:
             if config.filename_format == "certname_identity":
                 uid = template['badge']['name'] + recipient.identity
@@ -111,6 +113,9 @@ def create_unsigned_certificates_from_roster(config):
 
             with open(cert_file, 'w') as unsigned_cert:
                 json.dump(cert, unsigned_cert)
+                resultArr.append(uid + '.json')
+
+        print(json.dumps(resultArr))
 
 
 def get_config():
@@ -137,7 +142,7 @@ def get_config():
 def main():
     conf = get_config()
     create_unsigned_certificates_from_roster(conf)
-    print('Instantiated batch!')
+    # print('Instantiated batch!')
 
 
 if __name__ == "__main__":
